@@ -23,9 +23,14 @@ app.set('view engine', 'ejs');
 const server = http.createServer(app);
 const io = socketIO(server);
 
+//const middleware = require('./middleware/middleware');
 let bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json());
+
+const BuildRoute = require('./routes/build')
+app.use('/api', BuildRoute)
+
 
 //const joinRoute = require('./routes/joinquiz');
 //app.use('/api')
@@ -123,6 +128,14 @@ io.on('connection', (socket) => {
             const foundPlayer = quizes[roomId].players.find(player => player.uuid === user);
             foundPlayer.toggleReady();
             io.to(roomId).emit('updatePlayers', quizes[roomId].players);
+
+            const allPlayersReady = quizes[roomId].players.every(player => player.ready);
+
+            if (allPlayersReady) {
+                console.log('All players are ready!');
+                io.to(roomId).emit('startGame', quizes[roomId].players);
+            }
+
         })
 
         socket.on('disconnect', () => {
@@ -143,3 +156,4 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
     console.log(`server listening on http://localhost:${port}`);
 });
+

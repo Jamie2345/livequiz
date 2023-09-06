@@ -15,6 +15,11 @@ socket.on('uuid', uuid => {
         
         updatePlayersList();
     });
+
+    socket.on('startGame', (players) => {
+        console.log('all players ready game started');
+        console.log(players);
+    });
     
     socket.on('disconnect', (uuid) => {
         console.log("disconnect: " + uuid);

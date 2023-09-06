@@ -17,5 +17,4 @@ const questionSchema = new Schema({
 
 }, {timestamps: true});
 
-const Question = mongoose.model('Question', questionSchema)
-module.exports = Question;
+module.exports = questionSchema;
