@@ -1,7 +1,7 @@
 const socket = io();
 
-console.log(QUIZ_ID)
-socket.emit('connectQuiz', QUIZ_ID);
+console.log(ROOM_ID)
+socket.emit('connectQuiz', ROOM_ID);
 
 let players = [];
 let CLIENT_ID;
@@ -18,12 +18,11 @@ socket.on('uuid', uuid => {
 
     socket.on('startGame', (players) => {
         console.log('all players ready game started');
-        console.log(players);
+        location.reload()
     });
 
-    socket.on('getQuestion', (questionsLst, index) => {
-        console.log(questionsLst, index);
-        console.log('questions get')
+    socket.on('newQuestion', (questionJson) => {
+        console.log(questionJson);
     });
     
     socket.on('disconnect', (uuid) => {
@@ -73,4 +72,3 @@ function updatePlayersList() {
     }
 }
 
-socket.on('getQuestion', )

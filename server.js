@@ -46,8 +46,7 @@ function deleteByValue(map, valueToDelete) {
   }
 
 let quizCodes = new Map();
-let quizes = {};
-
+let quizzes = {};
 
 app.get('/', (req, res) => {
     res.render('index');
@@ -70,35 +69,47 @@ app.post('/join', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
-    const questionsLst = req.body.questionsLst;
+    const quizID = req.body.quizID;
 
     function generateUniqueNumber() {
         let randomNumber;
         do {
             randomNumber = Math.floor(Math.random() * 900000) + 100000;
-        } while (quizCodes.get(randomNumber));
+        } while (quizzes[randomNumber]);
 
         return randomNumber;
     }
 
     var code = generateUniqueNumber();
+
+    console.log(code)
     var uuid = uuidV4();
-
-    quizes['questionsLst'] = questionsLst;
-
-    console.log(quizes)
 
     quizCodes.set(code, uuid);
 
-    res.json({ code, uuid })
+    quizzes[uuid] = {
+        joinCode: code,
+        quizID: quizID,
+        waiting: true
+    }
+
+    console.log(quizzes[uuid])
+
+    res.json({code, uuid});
 });
 
 app.get('/:quiz', (req, res) => {
-    const quizId = req.params.quiz;
+    const roomId = req.params.quiz;
     const codeToCheck = Number(req.query.code);
+    console.log(codeToCheck);
 
-    if (quizCodes.get(codeToCheck) == quizId) {
-        res.render('waiting', { quizId: quizId, quizCode: codeToCheck });
+    if (quizCodes.get(codeToCheck) == roomId) {
+        if (quizzes[roomId].waiting) {
+            res.render('waiting', { roomId: roomId, quizCode: codeToCheck });
+        }
+        else {
+            res.render('quiz', { roomId: roomId, quizCode: codeToCheck })
+        }
     }
     else {
         res.render('invalid')
@@ -118,42 +129,40 @@ io.on('connection', (socket) => {
 
         player.name = player.generateName();
 
-        if (!quizes[roomId]) {
-            quizes[roomId] = {
-                players: [],
-            };
+        if (!quizzes[roomId].players) {
+            quizzes[roomId].players = [];
         }
-
-        quizes[roomId].players.push(player);
+        quizzes[roomId].players.push(player);
 
         // Emit events to the connected client and all clients in the room
         socket.emit('uuid', uuid);
-        io.to(roomId).emit('updatePlayers', quizes[roomId].players);
+        io.to(roomId).emit('updatePlayers', quizzes[roomId].players);
 
         socket.on('ready', (user) => {
-            const foundPlayer = quizes[roomId].players.find(player => player.uuid === user);
+            const foundPlayer = quizzes[roomId].players.find(player => player.uuid === user);
             foundPlayer.toggleReady();
-            io.to(roomId).emit('updatePlayers', quizes[roomId].players);
+            io.to(roomId).emit('updatePlayers', quizzes[roomId].players);
 
-            const allPlayersReady = quizes[roomId].players.every(player => player.ready);
+            const allPlayersReady = quizzes[roomId].players.every(player => player.ready);
 
             if (allPlayersReady) {
                 console.log('All players are ready!');
-                console.log(quizes[roomId].questionsLst)
-                io.to(roomId).emit('getQuestion', quizes[roomId].questionsLst, 0);
+                io.to(roomId).emit('startGame');
+                quizzes[roomId].waiting = false;
+                console.log(quizzes[roomId])
             }
 
         })
 
         socket.on('disconnect', () => {
-            const playerIndex = quizes[roomId].players.findIndex(player => player.uuid === uuid);
+            const playerIndex = quizzes[roomId].players.findIndex(player => player.uuid === uuid);
             if (playerIndex !== -1) {
-                quizes[roomId].players.splice(playerIndex, 1);
-                io.to(roomId).emit('updatePlayers', quizes[roomId].players);
+                quizzes[roomId].players.splice(playerIndex, 1);
+                io.to(roomId).emit('updatePlayers', quizzes[roomId].players);
             }
 
-            if (!quizes[roomId].players || quizes[roomId].players.length === 0) {
-                delete quizes[roomId];
+            if (!quizzes[roomId].players || quizzes[roomId].players.length === 0) {
+                delete quizzes[roomId];
                 deleteByValue(quizCodes, roomId);
             }
         });
