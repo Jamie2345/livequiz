@@ -20,6 +20,11 @@ socket.on('uuid', uuid => {
         console.log('all players ready game started');
         console.log(players);
     });
+
+    socket.on('getQuestion', (questionsLst, index) => {
+        console.log(questionsLst, index);
+        console.log('questions get')
+    });
     
     socket.on('disconnect', (uuid) => {
         console.log("disconnect: " + uuid);
@@ -67,3 +72,5 @@ function updatePlayersList() {
         playersList.appendChild(playerContainer);
     }
 }
+
+socket.on('getQuestion', )

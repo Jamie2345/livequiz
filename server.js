@@ -70,6 +70,8 @@ app.post('/join', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
+    const questionsLst = req.body.questionsLst;
+
     function generateUniqueNumber() {
         let randomNumber;
         do {
@@ -81,6 +83,10 @@ app.post('/create', (req, res) => {
 
     var code = generateUniqueNumber();
     var uuid = uuidV4();
+
+    quizes['questionsLst'] = questionsLst;
+
+    console.log(quizes)
 
     quizCodes.set(code, uuid);
 
@@ -133,7 +139,8 @@ io.on('connection', (socket) => {
 
             if (allPlayersReady) {
                 console.log('All players are ready!');
-                io.to(roomId).emit('startGame', quizes[roomId].players);
+                console.log(quizes[roomId].questionsLst)
+                io.to(roomId).emit('getQuestion', quizes[roomId].questionsLst, 0);
             }
 
         })
