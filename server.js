@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId; // Import ObjectId for ID conversion
 const app = express();
 const ejs = require('ejs');
 const http = require('http');
@@ -31,6 +32,7 @@ app.use(bodyParser.json());
 const BuildRoute = require('./routes/build')
 app.use('/api', BuildRoute)
 
+const Quiz = require('./models/Quiz')
 
 //const joinRoute = require('./routes/joinquiz');
 //app.use('/api')
@@ -68,8 +70,11 @@ app.post('/join', (req, res) => {
     }
 });
 
+const liveQuiz = require('./classes/livequiz');
+
 app.post('/create', (req, res) => {
-    const quizID = req.body.quizID;
+    const quizName = req.body.quizName;
+    console.log(quizName)
 
     function generateUniqueNumber() {
         let randomNumber;
@@ -80,22 +85,39 @@ app.post('/create', (req, res) => {
         return randomNumber;
     }
 
-    var code = generateUniqueNumber();
+    // write code to verify if this is a valid quizID
+    try {
+ 
+        Quiz.findOne({name: quizName})
 
-    console.log(code)
-    var uuid = uuidV4();
+        .then(foundQuiz => {
+            if (foundQuiz) {
+                var code = generateUniqueNumber();
+                var uuid = uuidV4();
 
-    quizCodes.set(code, uuid);
+                quizCodes.set(code, uuid);
+            
+                quizzes[uuid] = {
+                    joinCode: code,
+                    quizObj: new liveQuiz(foundQuiz),   // change this so instead of the db as parameter it is the entire quiz json
+                    players: [],
+                    waiting: true
+                };
+            
+                console.log(quizzes[uuid]);
+                res.json({ code, uuid });
+            }
+            else {
+                res.json({ message: 'A quiz with that name does not exists' });
+            }
+        });
 
-    quizzes[uuid] = {
-        joinCode: code,
-        quizID: quizID,
-        waiting: true
     }
-
-    console.log(quizzes[uuid])
-
-    res.json({code, uuid});
+    catch (error) {
+        console.error('Error checking object existence:', error);
+        res.json({ message: 'Error checking object existence' }); // Handle any errors gracefully
+    }
+    
 });
 
 app.get('/:quiz', (req, res) => {
@@ -123,15 +145,13 @@ io.on('connection', (socket) => {
 
     socket.on('connectQuiz', (roomId) => {
         socket.join(roomId);
+
         // Once connected generate a uuid and a player obj for the client and add it to the dictionary.
         const uuid = uuidV4();
         const player = new Player(uuid);
 
-        player.name = player.generateName();
-
-        if (!quizzes[roomId].players) {
-            quizzes[roomId].players = [];
-        }
+        // generate a new username for the user
+        player.name = player.generateName();  // should make a paramater called names in use to prevent duplicates
         quizzes[roomId].players.push(player);
 
         // Emit events to the connected client and all clients in the room
@@ -141,19 +161,30 @@ io.on('connection', (socket) => {
         socket.on('ready', (user) => {
             const foundPlayer = quizzes[roomId].players.find(player => player.uuid === user);
             foundPlayer.toggleReady();
-            io.to(roomId).emit('updatePlayers', quizzes[roomId].players);
+            
+            io.to(roomId).emit('updatePlayers', quizzes[roomId].players);  // broadcast a signal to all clients to update players
+            
 
+            // if all players have pressed the ready button send a signal to the room to start the game            
             const allPlayersReady = quizzes[roomId].players.every(player => player.ready);
-
             if (allPlayersReady) {
-                console.log('All players are ready!');
                 io.to(roomId).emit('startGame');
                 quizzes[roomId].waiting = false;
-                console.log(quizzes[roomId])
+
+                if (!quizzes[roomId].quizObj.isGameOver()) {
+                    var question = quizzes[roomId].quizObj.nextQuestion()
+                    console.log(question);
+                }
+                else {
+                    console.log('Game Over');
+                    io.to(roomId).emit('endGame');
+                }
+
             }
 
         })
 
+        // if a client disconnects remove them from the list of players (it might be a good idea to later not do this and instead store them as disconnected idk then mayble instead of deleting codes from the map just recycle them instead of removing them)
         socket.on('disconnect', () => {
             const playerIndex = quizzes[roomId].players.findIndex(player => player.uuid === uuid);
             if (playerIndex !== -1) {

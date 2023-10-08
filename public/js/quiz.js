@@ -16,12 +16,7 @@ socket.on('uuid', uuid => {
         updatePlayersList();
     });
 
-    socket.on('startGame', (players) => {
-        console.log('all players ready game started');
-        location.reload()
-    });
-
-    socket.on('newQuestion', (questionJson) => {
+    socket.on('showQuestion', (questionJson) => {
         console.log(questionJson);
     });
     
