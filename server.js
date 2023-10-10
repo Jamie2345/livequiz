@@ -172,8 +172,11 @@ io.on('connection', (socket) => {
                 quizzes[roomId].waiting = false;
 
                 if (!quizzes[roomId].quizObj.isGameOver()) {
-                    var question = quizzes[roomId].quizObj.nextQuestion()
-                    console.log(question);
+                    var quizObj = quizzes[roomId].quizObj;
+                    var questionToShow = quizObj.nextQuestion()
+                    console.log(questionToShow);
+                    // io.to(roomId).emit('showQuestion', quizObj);
+                    io.to(roomId).emit('showQuestion', {questionNumber: quizObj.questionNumber, question: questionToShow.question, multipleChoice: questionToShow.multipleChoice});
                 }
                 else {
                     console.log('Game Over');

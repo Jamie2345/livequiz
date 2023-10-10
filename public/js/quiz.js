@@ -19,6 +19,11 @@ socket.on('uuid', uuid => {
     socket.on('showQuestion', (questionJson) => {
         console.log(questionJson);
     });
+
+    socket.on('startGame', () => {
+        const playersList = document.querySelector('.playerslist-container');
+        playersList.remove();
+    });
     
     socket.on('disconnect', (uuid) => {
         console.log("disconnect: " + uuid);

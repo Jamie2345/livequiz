@@ -15,7 +15,9 @@ class liveQuiz {
     }
 
     if (this.questionNumber < this.quizJson.questions.length) {
-      return this.quizJson.questions[this.questionNumber]
+      var newQuestion = this.quizJson.questions[this.questionNumber]
+      this.currentQuestion = newQuestion
+      return newQuestion
     }
     else {
       this.running = false;
