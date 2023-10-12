@@ -1,0 +1,30 @@
+.player-container {
+    display: flex;
+    align-items: center;
+}
+
+.player-container button {
+    margin-left: 5px;
+}
+
+.multiple-choice-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+  }
+
+.multiple-choice-container p {
+    box-sizing: border-box;
+    padding: 10px;
+  }
+
+.multiple-choice {
+    text-align: center;
+    border: 1px solid black;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.multiple-choice:hover {
+    background-color: rgba(30, 30, 30, 0.2);
+}

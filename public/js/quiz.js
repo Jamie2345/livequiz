@@ -18,16 +18,53 @@ socket.on('uuid', uuid => {
 
     socket.on('showQuestion', (questionJson) => {
         console.log(questionJson);
+        displayQuestion(questionJson);
     });
 
     socket.on('startGame', () => {
         const playersList = document.querySelector('.playerslist-container');
         playersList.remove();
+
+        const waitingSign = document.querySelector('.waiting-room-title');
+        waitingSign.remove();
     });
     
     socket.on('disconnect', (uuid) => {
         console.log("disconnect: " + uuid);
     })
+
+    function displayQuestion(questionJson) {
+        const questionElement = document.createElement('h1');
+        questionElement.innerHTML = questionJson.question;
+    
+        console.log(questionJson.question);
+        console.log(questionElement);
+    
+        const multipleChoiceContainer = document.createElement('div');
+        multipleChoiceContainer.className = 'multiple-choice-container';
+    
+        questionJson.multipleChoice.forEach(choice => {
+            const multipleChoiceAnswer = document.createElement('div');
+            multipleChoiceAnswer.className = 'multiple-choice';
+    
+            multipleChoiceAnswer.addEventListener("click", () => {
+                console.log('hello')
+            });
+
+            const answerText = document.createElement('p');
+            answerText.innerHTML = choice;
+    
+            multipleChoiceAnswer.appendChild(answerText);
+            multipleChoiceContainer.appendChild(multipleChoiceAnswer);
+        })
+        multipleChoiceContainer.appendChild(questionElement);
+    
+        document.body.appendChild(questionElement);
+        document.body.appendChild(multipleChoiceContainer);
+
+
+    }
+
 })
 
 
@@ -71,4 +108,3 @@ function updatePlayersList() {
         playersList.appendChild(playerContainer);
     }
 }
-
