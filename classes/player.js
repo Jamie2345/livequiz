@@ -3,6 +3,7 @@ class Player {
         this.uuid = uuid;
         this.name = name;
         this.score = score;
+        this.questionAnswer = null;
         this.ready = ready;
     };
 

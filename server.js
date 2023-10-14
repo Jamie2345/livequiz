@@ -187,6 +187,39 @@ io.on('connection', (socket) => {
 
         })
 
+        socket.on('userAnswer', (answer, userID) => {
+            var quizObj = quizzes[roomId].quizObj;
+            var players = quizzes[roomId].players;
+
+            console.log(quizObj)
+            console.log(userID)
+            console.log(players)
+
+            var playerFound = quizzes[roomId].players.find(player => player.uuid === userID)
+            
+            if (playerFound) {
+                playerFound.questionAnswer = answer;
+                console.log(`player found: ${playerFound}`)
+
+                // socket.emit('showAnswer', answer); can do this as someone will be shown answer before another user answers the question in a room where people can view each others screens it will allow copying answers
+    
+                var allPlayersAnswered = players.every(player => player.questionAnswer !== null);
+    
+                if (allPlayersAnswered) {
+                    console.log("All players have answered the question.");
+                    var playersAnswers = 'hello world testing players answers';
+                    io.to(roomId).emit('showAnswer', playersAnswers)
+                } else {
+                    console.log("Not all players have answered the question.");
+                }
+            }
+
+            else {
+                console.log("player doesn't exist");
+            }
+
+        });
+
         // if a client disconnects remove them from the list of players (it might be a good idea to later not do this and instead store them as disconnected idk then mayble instead of deleting codes from the map just recycle them instead of removing them)
         socket.on('disconnect', () => {
             const playerIndex = quizzes[roomId].players.findIndex(player => player.uuid === uuid);

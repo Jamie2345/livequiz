@@ -16,11 +16,6 @@ socket.on('uuid', uuid => {
         updatePlayersList();
     });
 
-    socket.on('showQuestion', (questionJson) => {
-        console.log(questionJson);
-        displayQuestion(questionJson);
-    });
-
     socket.on('startGame', () => {
         const playersList = document.querySelector('.playerslist-container');
         playersList.remove();
@@ -28,10 +23,20 @@ socket.on('uuid', uuid => {
         const waitingSign = document.querySelector('.waiting-room-title');
         waitingSign.remove();
     });
+
+    socket.on('showQuestion', (questionJson) => {
+        console.log(questionJson);
+        displayQuestion(questionJson);
+    });
+
+    socket.on('showAnswer', (playersAnswers) => {
+        console.log(playersAnswers);
+        displayAnswer(playersAnswers);
+    });
     
     socket.on('disconnect', (uuid) => {
         console.log("disconnect: " + uuid);
-    })
+    });
 
     function displayQuestion(questionJson) {
         const questionElement = document.createElement('h1');
@@ -46,23 +51,28 @@ socket.on('uuid', uuid => {
         questionJson.multipleChoice.forEach(choice => {
             const multipleChoiceAnswer = document.createElement('div');
             multipleChoiceAnswer.className = 'multiple-choice';
-    
-            multipleChoiceAnswer.addEventListener("click", () => {
-                console.log('hello')
-            });
 
             const answerText = document.createElement('p');
             answerText.innerHTML = choice;
     
             multipleChoiceAnswer.appendChild(answerText);
             multipleChoiceContainer.appendChild(multipleChoiceAnswer);
+
+            multipleChoiceAnswer.addEventListener("click", () => {
+                var userAnswer = answerText.innerHTML;
+
+                socket.emit("userAnswer", userAnswer, CLIENT_ID);
+            });
         })
         multipleChoiceContainer.appendChild(questionElement);
     
         document.body.appendChild(questionElement);
         document.body.appendChild(multipleChoiceContainer);
 
+    }
 
+    function displayAnswer(playersAnswers) {
+        console.log(playersAnswers);
     }
 
 })
