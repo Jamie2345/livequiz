@@ -207,7 +207,12 @@ io.on('connection', (socket) => {
     
                 if (allPlayersAnswered) {
                     console.log("All players have answered the question.");
-                    var playersAnswers = 'hello world testing players answers';
+                    var playersAnswers = {};
+
+                    players.forEach(player => {
+                        playersAnswers[player.uuid] = player.questionAnswer;
+                    });
+
                     io.to(roomId).emit('showAnswer', playersAnswers)
                 } else {
                     console.log("Not all players have answered the question.");
