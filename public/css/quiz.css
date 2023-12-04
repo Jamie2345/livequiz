@@ -28,3 +28,273 @@
 .multiple-choice:hover {
     background-color: rgba(30, 30, 30, 0.2);
 }
+
+.questionText {
+    border: none;
+}
+
+.spinner-container {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+.bar-container {
+    display: flex;
+    margin-top: 20px;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .bar {
+    background-color: blue; /* You can set any color you like */
+    margin-right: 10px;
+  }
+
+  .bar-text {
+    text-align: center;
+  }
+
+
+  .player-bar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 40px;
+  }
+
+
+  .leaderboard-title {
+    color: red;
+}
+
+.leaderboard-main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.leaderboard-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    max-width: 1000px;
+}
+
+.leaderboard-podium {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 200px;
+    padding: 0 10px;
+    align-items: center;
+    margin: 0 10px;
+    text-align: center;
+    height: 0;
+
+    /* Apply animation properties */
+    animation: rise 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.leaderboard-podium h2 {
+    margin-bottom: 0;
+}
+
+.leaderboard-podium-bar {
+    width: 100%;
+    background-color: #8a2be2;
+    height: 100%;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.leaderboard-podium h2,
+.leaderboard-podium h3 {
+    opacity: 0;
+    animation: dropAndFadeIn 0.5s ease-out 2s forwards;
+}
+
+.gold {
+    color: #ffd700; /* Gold color */
+}
+
+.silver {
+    color: #c0c0c0; /* Silver color */
+}
+
+.bronze {
+    color: #cd7f32; /* Bronze color */
+}
+
+
+@keyframes rise {
+    0% {
+        height: 0;
+    }
+    100% {
+        height: var(--target-height);
+    }
+}
+
+@keyframes dropAndFadeIn {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
+#timer-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid #3498db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 24px;
+    overflow: hidden;
+    animation: borderAnimation 10s linear;
+  }
+
+
+  .base-timer {
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .base-timer__svg {
+    transform: scaleX(-1);
+  }
+  
+  .base-timer__circle {
+    fill: none;
+    stroke: none;
+  }
+  
+  .base-timer__path-elapsed {
+    stroke-width: 7px;
+    stroke: grey;
+  }
+  
+  .base-timer__path-remaining {
+    stroke-width: 7px;
+    stroke-linecap: round;
+    transform: rotate(90deg);
+    transform-origin: center;
+    transition: 1s linear all;
+    fill-rule: nonzero;
+    stroke: currentColor;
+  }
+  
+  .base-timer__path-remaining.green {
+    color: rgb(65, 184, 131);
+  }
+  
+  .base-timer__path-remaining.orange {
+    color: orange;
+  }
+  
+  .base-timer__path-remaining.red {
+    color: red;
+  }
+  
+  .base-timer__label {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+
+  #timer {
+    display: none;
+  }
+
+
+  .players-submitted {
+    display: none;
+    font-size: 20px;
+  }
+
+  .players-submitted span {
+    font-size: 20px;
+    
+  }
+
+  .players-submitted h2 {
+    font-size: 20px;
+  }
+
+
+  .game-info-container, .question-info-container, .players-submitted {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .players-submitted {
+    align-items: center;
+    margin-right: 20px;
+  }
+
+  .players-submitted {
+    display: none;
+  }
+
+  .submitted-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+  }
+
+
+  .submitted-stats {
+    margin: 0 10px;
+  }
+
+  .submitted-stats p {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }

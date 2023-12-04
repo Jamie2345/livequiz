@@ -6,6 +6,7 @@
     <title>Document</title>
     <script src="/socket.io/socket.io.js" defer></script>
     <script src="/js/quiz.js" defer></script>
+    <script src="/js/timer.js" defer></script>
     <link rel="stylesheet" href="css/quiz.css">
     <script>
         const ROOM_ID = "<%= roomId %>"
@@ -14,8 +15,24 @@
 </head>
 <body>
     <h2 class="waiting-room-title">Waiting Room</h2>
-    <h2>Code: <%= quizCode %></h2>
+    <div class="game-info-container">
+        <h2>Code: <%= quizCode %></h2>
+        <div class="question-info-container">
+            <div class="players-submitted">
+                <h3>Answers Submitted: </h3>
+                <div class="submitted-stats">
+                    <p id="total-submitted"></p>
+                    <p>/</p>
+                    <p id="total-players"></p>
+                </div>
+            </div>
+            <div id="timer"></div>
+        </div>
+    </div>
     <div class="playerslist-container">
+    </div>
+    <div class="spinner-container">
+        <div class="spinner"></div>
     </div>
 </body>
 </html>
