@@ -167,6 +167,11 @@ io.on('connection', (socket) => {
 
         // generate a new username for the user
         player.name = player.generateName();  // should make a paramater called names in use to prevent duplicates
+        
+        if (!quizzes[roomId].players) {
+            return false;
+        }
+        
         quizzes[roomId].players.push(player);
 
         const payload = {
@@ -337,13 +342,13 @@ io.on('connection', (socket) => {
 
         // if a client disconnects remove them from the list of players (it might be a good idea to later not do this and instead store them as disconnected idk then mayble instead of deleting codes from the map just recycle them instead of removing them)
         socket.on('disconnect', () => {
-            const playerIndex = players.findIndex(player => player.uuid === uuid);
-            if (playerIndex !== -1) {
+            if (players.length >= 2) {
+                const playerIndex = players.findIndex(player => player.uuid === uuid);
                 players.splice(playerIndex, 1);
                 io.to(roomId).emit('updatePlayers', players);
             }
 
-            if (!players || players.length === 0) {
+            else {
                 delete quizzes[roomId];
                 deleteByValue(quizCodes, roomId);
             }
