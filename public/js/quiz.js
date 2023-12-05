@@ -223,6 +223,9 @@ socket.on('connected', (quizToken) => {
     
         const multipleChoiceContainer = document.createElement('div');
         multipleChoiceContainer.className = 'multiple-choice-container';
+
+        const playersSubmitted = document.getElementById('total-submitted');
+        playersSubmitted.innerHTML = '0';
     
         questionJson.multipleChoice.forEach(choice => {
             const multipleChoiceAnswer = document.createElement('div');
