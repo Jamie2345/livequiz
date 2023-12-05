@@ -49,6 +49,9 @@ socket.on('connected', (quizToken) => {
         const waitingSign = document.querySelector('.waiting-room-title');
         waitingSign.remove();
 
+        const questionsRemaining = document.querySelector('.questions-left-container');
+        questionsRemaining.style.display = 'flex';
+
         showTimerElement();
     });
 
@@ -98,6 +101,10 @@ socket.on('connected', (quizToken) => {
     }
 
     socket.on('displayLeaderboard', (players) => {
+        
+        const questionsRemaining = document.querySelector('.questions-left-container');
+        questionsRemaining.style.display = 'none';
+        
         turnOffSpinner();
         removeTimerElement();
         console.log('leaderboard');
@@ -217,7 +224,17 @@ socket.on('connected', (quizToken) => {
         const questionElement = document.createElement('h1');
         questionElement.innerHTML = questionJson.question;
         questionElement.className = 'questionText';
+
+        console.log('question json');
+        console.log(questionJson);
+
+        // update the questions remaining
+        let questionNumberElement = document.getElementById('question-number');
+        let totalQuestionsElement = document.getElementById('total-questions');
     
+        questionNumberElement.innerHTML = questionJson.questionIndex+1;
+        totalQuestionsElement.innerHTML = questionJson.quizLength;
+
         console.log(questionJson.question);
         console.log(questionElement);
     

@@ -198,7 +198,7 @@ io.on('connection', (socket) => {
             var questionToShow = quizObj.nextQuestion()
             console.log(questionToShow);
             // io.to(roomId).emit('showQuestion', quizObj);
-            io.to(roomId).emit('showQuestion', {questionNumber: quizObj.questionIndex, quizLength: quizObj.size, question: questionToShow.question, multipleChoice: questionToShow.multipleChoice});
+            io.to(roomId).emit('showQuestion', {questionIndex: quizObj.questionIndex, quizLength: quizObj.size, question: questionToShow.question, multipleChoice: questionToShow.multipleChoice});
             
             const submittedPlayersCount = players.filter(player => player.questionAnswer !== null).length;        
             socket.emit('incrementSubmitted', submittedPlayersCount, players.length);

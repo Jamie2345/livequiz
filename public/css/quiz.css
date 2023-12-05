@@ -255,21 +255,17 @@
     font-size: 20px;
   }
 
-  .players-submitted span {
-    font-size: 20px;
-    
-  }
-
   .players-submitted h2 {
     font-size: 20px;
   }
 
 
-  .game-info-container, .question-info-container, .players-submitted {
+  .game-info-container, .question-info-container, .players-submitted, .questions-left-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    font-size: 20px;
   }
 
   .players-submitted {
@@ -281,7 +277,7 @@
     display: none;
   }
 
-  .submitted-stats {
+  .submitted-stats, .questions-left-stats {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -289,12 +285,20 @@
   }
 
 
-  .submitted-stats {
+  .submitted-stats, .questions-left-stats {
     margin: 0 10px;
   }
 
-  .submitted-stats p {
+  .submitted-stats p, .questions-left-stats p {
     font-size: 2rem;
     font-weight: 500;
     margin: 0;
+  }
+
+  .questions-left-container {
+    margin-right: 10px;
+  }
+
+  .questions-left-container {
+    display: none;
   }
